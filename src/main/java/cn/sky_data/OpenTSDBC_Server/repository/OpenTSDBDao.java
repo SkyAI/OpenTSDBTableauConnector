@@ -22,15 +22,14 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 public class OpenTSDBDao {
-
     @Value("${openTSDBUrl}")
     private String openTSDBUrl;
 
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static Logger logger = LoggerFactory.getLogger(OpenTSDBDao.class);
 
     public ResponseData getMetrics () {
-        String url = openTSDBUrl + "/api/suggest?type=metrics";
+        String url = openTSDBUrl + "/api/suggest?type=metrics&max=1000";
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(240, TimeUnit.SECONDS)
                 .readTimeout(240, TimeUnit.SECONDS)
@@ -72,7 +71,7 @@ public class OpenTSDBDao {
     }
 
     public ResponseData getTagValues () {
-        String url = openTSDBUrl + "/api/suggest?type=tagv";
+        String url = openTSDBUrl + "/api/suggest?type=tagv&max=1000";
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(240, TimeUnit.SECONDS)
                 .readTimeout(240, TimeUnit.SECONDS)
@@ -124,13 +123,14 @@ public class OpenTSDBDao {
     }
 
     private ResponseData success(Response response) throws IOException {
-        String s = response.body().string();
+        ResponseBody  responseBody = response.body();
+        InputStream is = responseBody.byteStream();
         try {
-            JSONArray data = new JSONArray(s);
-            response.body().close();
+            JSONArray data = new JSONArray(IOUtils.toString(is, "UTF-8"));
+            responseBody.close();
             return new ResponseData<>(data);
-        } catch (JSONException e) {
-            logger.error(s);
+        } catch (IOException e) {
+            logger.error("IOException occurred in OpenTSDBDao.findBy() for:" + e.getMessage());
             return new ResponseData("", 400);
         }
 
@@ -140,5 +140,14 @@ public class OpenTSDBDao {
         int code = response.code();
         return new ResponseData("", code);
     }
+
+    public String getOpenTSDBUrl() {
+        return openTSDBUrl;
+    }
+
+    public void setOpenTSDBUrl(String openTSDBUrl) {
+        this.openTSDBUrl = openTSDBUrl;
+    }
+
 }
 

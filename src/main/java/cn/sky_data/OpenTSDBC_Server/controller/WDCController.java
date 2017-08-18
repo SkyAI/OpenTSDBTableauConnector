@@ -1,9 +1,8 @@
 package cn.sky_data.OpenTSDBC_Server.controller;
 
 import cn.sky_data.OpenTSDBC_Server.domain.WDCData;
-import cn.sky_data.OpenTSDBC_Server.repository.OpenTSDBAPI;
 import cn.sky_data.OpenTSDBC_Server.repository.OpenTSDBDao;
-import cn.sky_data.OpenTSDBC_Server.service.RealTimeDataService;
+import cn.sky_data.OpenTSDBC_Server.service.WDCService;
 import cn.sky_data.OpenTSDBC_Server.vo.MeasurementBindMethod;
 import cn.sky_data.OpenTSDBC_Server.vo.ResponseData;
 import org.json.JSONArray;
@@ -11,43 +10,49 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-/**
- * Created by chenhaonee on 2017/5/18.
- */
 @CrossOrigin
-@RestController
-public class RealTimeDataController {
+@Controller
+public class WDCController {
 
-    private static Logger logger = LoggerFactory.getLogger(RealTimeDataController.class);
+    private static Logger logger = LoggerFactory.getLogger(WDCController.class);
 
 
     @Autowired
-    private RealTimeDataService realTimeDataService;
+    private WDCService wdcService;
     @Autowired
     private OpenTSDBDao openTSDBDao;
+
+    @RequestMapping(path = "/wdc")
+//    @ResponseBody
+    public String getWDC( HttpServletRequest request) {
+        String reqIP = request.getRemoteAddr();
+        //Set allow to cross-domain access.
+//        rsp.setHeader("Access-Control-Allow-Origin", "*");
+//        rsp.addHeader("Access-Control-Allow-Methods", "GET, POST");
+        return "wdc";
+    }
 
     @RequestMapping(path = "/wdc/getData", method = RequestMethod.POST)
     @ResponseBody
     public ResponseData getRealTimeData(@RequestParam(value = "start") long startTime,
                                         @RequestParam(value = "end") long endTime,
                                         @RequestParam(value = "metrics") JSONArray metrics,
-                                        @RequestParam(value = "machines") Short[] machines,
+                                        @RequestParam(value = "tagList", required = false) JSONArray tagList,
                                         HttpServletResponse rsp, HttpServletRequest request) {
         String reqIP = request.getRemoteAddr();
-        logger.info(reqIP + " : Request Get Real Time Data");
+        logger.info(reqIP + " : Request Get Real Time Data. Start: " + startTime + " End: " + endTime);
         //Set allow to cross-domain access.
-        rsp.setHeader("Access-Control-Allow-Origin", "*");
-        rsp.addHeader("Access-Control-Allow-Methods", "GET, POST");
+//        rsp.setHeader("Access-Control-Allow-Origin", "*");
+//        rsp.addHeader("Access-Control-Allow-Methods", "GET, POST");
 
         //Build multi-measurment
         List<MeasurementBindMethod> mbms = new ArrayList<>();
@@ -60,13 +65,32 @@ public class RealTimeDataController {
         }
 
         //OpenTSDB Query
-        ResponseData responseData = realTimeDataService.findBy(new Timestamp(startTime), new Timestamp(endTime), mbms, machines);
-//        WDCData data = new WDCData(new Long(1501486474));
-//        data.putValue("wind.lalala", 1.1);
-//        List<WDCData> res = new ArrayList<>();
-//        res.add(data);
+        List<Short> machineList = null;
+        if (tagList != null) {
+            machineList = new ArrayList<>();
+            for (int i=0; i<tagList.length(); ++i) {
+                JSONObject jsonObject = tagList.getJSONObject(i);
+                for (String key : jsonObject.keySet()) {
+                    if (key.equals("machineId")) {
+                        machineList.add((short)(jsonObject.getInt(key)));
+                    }
+                }
+            }
+        }
+        Short[] machines = null;
+        if(machineList != null) {
+            machines = new Short[machineList.size()];
+            machineList.toArray(machines);
+        }
+
+//        ResponseData responseData = wdcService.findBy(new Timestamp(startTime), new Timestamp(endTime), mbms, machines);
+        WDCData data = new WDCData(new Long(1501486474), new Short("1"));
+        data.putValue("wind.lalala", 1.1);
+        List<WDCData> res = new ArrayList<>();
+        res.add(data);
         logger.info(reqIP + " : Get Real Time Data Success");
-        return responseData;
+        return new ResponseData(res);
+//        return responseData;
     }
 
 
@@ -75,10 +99,6 @@ public class RealTimeDataController {
     public ResponseData getMetrics(HttpServletResponse rsp, HttpServletRequest request) {
         String reqIP = request.getRemoteAddr();
         logger.info(reqIP + " : Request Get All Metrics");
-        //Set allow to cross-domain access.
-        rsp.setHeader("Access-Control-Allow-Origin", "*");
-        rsp.addHeader("Access-Control-Allow-Methods", "GET, POST");
-
         ResponseData responseData = openTSDBDao.getMetrics();
         logger.info(reqIP + " : Get All Metrics Success");
         return responseData;
@@ -88,13 +108,10 @@ public class RealTimeDataController {
     @ResponseBody
     public ResponseData getTagKeys(HttpServletResponse rsp, HttpServletRequest request) {
         String reqIP = request.getRemoteAddr();
-        logger.info(reqIP + " : Request Get All Metrics");
-        //Set allow to cross-domain access.
-        rsp.setHeader("Access-Control-Allow-Origin", "*");
-        rsp.addHeader("Access-Control-Allow-Methods", "GET, POST");
+        logger.info(reqIP + " : Request Get All Tag Key");
 
         ResponseData responseData = openTSDBDao.getTagKeys();
-        logger.info(reqIP + " : Get All Metrics Success");
+        logger.info(reqIP + " : Get All Tag Key Success");
         return responseData;
     }
 
@@ -102,14 +119,10 @@ public class RealTimeDataController {
     @ResponseBody
     public ResponseData getTagValues(HttpServletResponse rsp, HttpServletRequest request) {
         String reqIP = request.getRemoteAddr();
-        logger.info(reqIP + " : Request Get All Metrics");
-        //Set allow to cross-domain access.
-        rsp.setHeader("Access-Control-Allow-Origin", "*");
-        rsp.addHeader("Access-Control-Allow-Methods", "GET, POST");
+        logger.info(reqIP + " : Request Get All Tag Value");
 
         ResponseData responseData = openTSDBDao.getTagValues();
-        logger.info(reqIP + " : Get All Metrics Success");
+        logger.info(reqIP + " : Get All Tag Value Success");
         return responseData;
     }
-
 }

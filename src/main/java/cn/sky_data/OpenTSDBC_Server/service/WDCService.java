@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by chenhaonee on 2017/5/12.
  */
 @Service
-public class RealTimeDataService {
+public class WDCService {
 
     @Autowired
     private OpenTSDBDao openTSDBDao;
