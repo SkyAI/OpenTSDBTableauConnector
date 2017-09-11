@@ -93,6 +93,7 @@ public class OpenTSDBDao {
 
     public ResponseData findBy(JSONObject query) {
         String url = openTSDBUrl + "/api/query?details";
+        logger.info("Param : " + query.toString());
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(240, TimeUnit.SECONDS)
                 .readTimeout(240, TimeUnit.SECONDS)
@@ -106,6 +107,7 @@ public class OpenTSDBDao {
         Response response;
         try {
             response = client.newCall(request).execute();
+            logger.info(response.toString());
             return processResult(response);
         } catch (IOException e) {
             e.printStackTrace();

@@ -7,11 +7,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="css/bootstrap.min.css" data-th-href="@{css/bootstrap.min.css}" crossorigin="anonymous"/>
     <link rel="stylesheet" href="css/bootstrap-select.min.css" data-th-href="@{css/bootstrap-select.min.css}" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="css/bootstrap-datetimepicker.min.js" data-th-href="@{css/bootstrap-select.min.css}" crossorigin="anonymous"/>
     <script src="js/lib/jquery-3.2.1.min.js" type="text/javascript" data-th-src="@{js/lib/jquery-3.2.1.min.js}" crossorigin="anonymous"></script>
     <script src="js/lib/bootstrap.min.js" type="text/javascript" data-th-src="@{js/lib/bootstrap.min.js}" crossorigin="anonymous"></script>
     <script src="js/lib/bootstrap-select.js" type="text/javascript" data-th-src="@{js/lib/bootstrap-select.js}" crossorigin="anonymous"></script>
     <script src="js/lib/tableauwdc-2.2.latest.js" type="text/javascript" data-th-src="@{js/lib/tableauwdc-2.2.latest.js}" crossorigin="anonymous"></script>
-
+    <script src="js/lib/bootstrap-datetimepicker.min.js" type="text/javascript" data-th-src="@{js/lib/tableauwdc-2.2.latest.js}" crossorigin="anonymous"></script>
     <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">-->
     <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" type="text/javascript"></script>-->
     <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>-->
@@ -24,7 +25,7 @@
     <form role="form" id="urlForm" action="">
         <div class="form-group">
             <label for="url_host">Host:</label>
-            <input class="form-control" id="url_host" value="localhost"/>
+            <input class="form-control" id="url_host" value="192.192.141.40"/>
             <label for="url_port">Port:</label>
             <input class="form-control" id="url_port" value="2333"/>
             <div class='button-group' id='setUrl'>
@@ -40,17 +41,17 @@
         <!--style="visibility: hidden;">-->
         <div class="form-group">
             <label for="start_datetime">Start Time:</label>
-            <div class='input-group date' id='start_datetime'>
-                <input class="form-control" id="start_time" value="2017/07/31-15:34:00"/>
+            <div class='input-group date' id='start_datetime' data-date="2017/07/18-15:00:00" data-date-format="yyyy/mm/dd-hh:ii:ss">
+                <input class="form-control" id="start_time" type="text" value="2017/07/18-15:00:00"/>
                 <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar"></span>
+                    <span class="glyphicon glyphicon-calendar add-on"></span>
                 </span>
             </div>
             <label for="end_datetime">End Time:</label>
-            <div class='input-group date' id='end_datetime'>
-                <input class="form-control" id="end_time" value="2017/07/31-15:35:00"/>
+            <div class='input-group date' id='end_datetime' data-date="2017/07/20-15:00:00" data-date-format="yyyy/mm/dd-hh:ii:ss">
+                <input class="form-control" id="end_time" type="text" value="2017/07/20-15:00:00"/>
                 <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar"></span>
+                    <span class="glyphicon glyphicon-calendar add-on"></span>
                 </span>
             </div>
             <label for="metricList">Metric:</label>

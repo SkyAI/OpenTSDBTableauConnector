@@ -14,15 +14,14 @@ import java.util.List;
 public class OpenTSDBAPI {
 
 
-    public static JSONObject simpleBuild(Timestamp start, Timestamp end, List<MeasurementBindMethod> measurementBindMethods, short machine, String groupUnit) {
+    public static JSONObject simpleBuild(Timestamp start, Timestamp end, List<MeasurementBindMethod> measurementBindMethods, String machine, String groupUnit) {
         JSONObject param = new JSONObject();
         param.put("start", start.getTime());
         param.put("end", end.getTime());
         param.put("showQuery",true);
 
         List<JSONObject> list = new ArrayList<>();
-        for (int i = 0; i < measurementBindMethods.size(); i++) {
-            MeasurementBindMethod measurementBindMethod = measurementBindMethods.get(i);
+        for (MeasurementBindMethod measurementBindMethod : measurementBindMethods) {
             String name = measurementBindMethod.getName();
             for (String method:measurementBindMethod.getMethod()){
                 JSONObject jsonObject = new JSONObject();
@@ -41,15 +40,14 @@ public class OpenTSDBAPI {
         return param;
     }
 
-    public static JSONObject simpleBuild(Timestamp start, Timestamp end, List<MeasurementBindMethod> measurementBindMethods, short machine) {
+    public static JSONObject simpleBuild(long start, long end, List<MeasurementBindMethod> measurementBindMethods, String machine) {
         JSONObject param = new JSONObject();
-        param.put("start", start.getTime());
-        param.put("end", end.getTime());
+        param.put("start", start);
+        param.put("end", end);
         param.put("showQuery",true);
 
         List<JSONObject> list = new ArrayList<>();
-        for (int i = 0; i < measurementBindMethods.size(); i++) {
-            MeasurementBindMethod measurementBindMethod = measurementBindMethods.get(i);
+        for (MeasurementBindMethod measurementBindMethod : measurementBindMethods) {
             String name = measurementBindMethod.getName();
             for (String method:measurementBindMethod.getMethod()){
                 JSONObject jsonObject = new JSONObject();

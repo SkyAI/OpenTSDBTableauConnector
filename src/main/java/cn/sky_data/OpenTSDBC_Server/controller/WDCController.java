@@ -47,12 +47,9 @@ public class WDCController {
                                         @RequestParam(value = "end") long endTime,
                                         @RequestParam(value = "metrics") JSONArray metrics,
                                         @RequestParam(value = "tagList", required = false) JSONArray tagList,
-                                        HttpServletResponse rsp, HttpServletRequest request) {
+                                        HttpServletRequest request) {
         String reqIP = request.getRemoteAddr();
         logger.info(reqIP + " : Request Get Real Time Data. Start: " + startTime + " End: " + endTime);
-        //Set allow to cross-domain access.
-//        rsp.setHeader("Access-Control-Allow-Origin", "*");
-//        rsp.addHeader("Access-Control-Allow-Methods", "GET, POST");
 
         //Build multi-measurment
         List<MeasurementBindMethod> mbms = new ArrayList<>();
@@ -65,38 +62,38 @@ public class WDCController {
         }
 
         //OpenTSDB Query
-        List<Short> machineList = null;
+        List<String> machineList = null;
         if (tagList != null) {
             machineList = new ArrayList<>();
             for (int i=0; i<tagList.length(); ++i) {
                 JSONObject jsonObject = tagList.getJSONObject(i);
                 for (String key : jsonObject.keySet()) {
-                    if (key.equals("machineId")) {
-                        machineList.add((short)(jsonObject.getInt(key)));
-                    }
+//                    if (key.equals("machineId")) {
+                        machineList.add(jsonObject.getString(key));
+//                    }
                 }
             }
         }
-        Short[] machines = null;
+        String[] machines = null;
         if(machineList != null) {
-            machines = new Short[machineList.size()];
+            machines = new String[machineList.size()];
             machineList.toArray(machines);
         }
 
-//        ResponseData responseData = wdcService.findBy(new Timestamp(startTime), new Timestamp(endTime), mbms, machines);
-        WDCData data = new WDCData(new Long(1501486474), new Short("1"));
-        data.putValue("wind.lalala", 1.1);
-        List<WDCData> res = new ArrayList<>();
-        res.add(data);
+        ResponseData responseData = wdcService.findBy(startTime, endTime, mbms, machines);
+//        WDCData data = new WDCData((long)1501486474, new Short("1"));
+//        data.putValue("wind.lalala", 1.1);
+//        List<WDCData> res = new ArrayList<>();
+//        res.add(data);
         logger.info(reqIP + " : Get Real Time Data Success");
-        return new ResponseData(res);
-//        return responseData;
+//        return new ResponseData<>(res);
+        return responseData;
     }
 
 
     @RequestMapping(path = "/wdc/metrics", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseData getMetrics(HttpServletResponse rsp, HttpServletRequest request) {
+    public ResponseData getMetrics( HttpServletRequest request) {
         String reqIP = request.getRemoteAddr();
         logger.info(reqIP + " : Request Get All Metrics");
         ResponseData responseData = openTSDBDao.getMetrics();
@@ -106,7 +103,7 @@ public class WDCController {
 
     @RequestMapping(path = "/wdc/tagk", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseData getTagKeys(HttpServletResponse rsp, HttpServletRequest request) {
+    public ResponseData getTagKeys(HttpServletRequest request) {
         String reqIP = request.getRemoteAddr();
         logger.info(reqIP + " : Request Get All Tag Key");
 
@@ -117,7 +114,7 @@ public class WDCController {
 
     @RequestMapping(path = "/wdc/tagv", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseData getTagValues(HttpServletResponse rsp, HttpServletRequest request) {
+    public ResponseData getTagValues(HttpServletRequest request) {
         String reqIP = request.getRemoteAddr();
         logger.info(reqIP + " : Request Get All Tag Value");
 

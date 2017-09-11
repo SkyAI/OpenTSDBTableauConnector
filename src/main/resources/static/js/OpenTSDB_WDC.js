@@ -1,3 +1,15 @@
+var URL_INFO = {
+    "host" : "192.192.141.40",
+    "port" : "2333"
+};
+
+var URL_SUFFIX = {
+    "query" : "/wdc/getData",
+    "metrics" : "/wdc/metrics",
+    "tagk" : "/wdc/tagk",
+    "tagv" : "/wdc/tagv"
+};
+
 (function () {
     var myConnector = tableau.makeConnector();
 
@@ -30,7 +42,7 @@
             var tagCol = {
                 id: val,
                 alias: val,
-                dataType: tableau.dataTypeEnum.int
+                dataType: tableau.dataTypeEnum.string
             }
             cols.push(tagCol);
         })
@@ -59,7 +71,7 @@
 		var tagList = connectionData["tagList"];
 
 		tableData = [];
-        queryUrl = buildUrl(URL_INFO.host, URL_INFO.port, URL_SUFFIX.query);
+        queryUrl = buildUrl(host, port, URL_SUFFIX.query);
         param = buildPostParams(startTime, endTime, metrics, tagList);
 //        tableau.abortWithError("Start to query.");
 
@@ -74,13 +86,9 @@
                 if(res.resultCode == 200 && data != null && data.length != 0) {
                     data.forEach(function(val, id) {
                         date = val.timeStamp;
-                        if (date > 20000000000) {
-                            date = new Date(date);
-                        } else {
-                            date = new Date(date*1000);
-                        }
+                        date = date > 20000000000 ? new Date(date) : new Date(date * 1000);
                         var entry = {
-                             "timeStamp": date,
+                             "timeStamp": date
                         };
                         tagKeyList.forEach(function(key){
                             if(val[key] != null){
@@ -181,18 +189,6 @@
         });
     });
 })()
-
-var URL_INFO = {
-    "host" : "localhost",
-    "port" : "2333"
-};
-
-var URL_SUFFIX = {
-    "query" : "/wdc/getData",
-    "metrics" : "/wdc/metrics",
-    "tagk" : "/wdc/tagk",
-    "tagv" : "/wdc/tagv"
-}
 
 function setViewAtr () {
 
@@ -419,7 +415,7 @@ function testFunction (tableData, tagKeyList) {
                             date = new Date(date*1000);
                         }
                         var entry = {
-                             "timeStamp": date,
+                             "timeStamp": date
                         };
                         tagKeyList.forEach(function(key){
                             if(val[key] != null){

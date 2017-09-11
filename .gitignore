@@ -1,0 +1,6 @@
+*.iml
+*.log
+.idea/
+target/
+src/main/resources/static/index.html
+src/main/resources/templates/greeting.html

@@ -1,32 +1,33 @@
 package cn.sky_data.OpenTSDBC_Server.domain;
 
-import cn.sky_data.OpenTSDBC_Server.vo.MeasurementBindMethod;
-
 import javax.persistence.Entity;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Entity
 public class WDCData {
 
-    private Long timeStamp;
-    private Short machineId;
+    private long timeStamp;
+    private String machineId;
     private Map<String, Double> values;
 
-    public WDCData(Long time, Short machineId) {
+    public WDCData(long time, String machineId) {
         this.timeStamp = time;
         values = new HashMap<>();
         this.machineId = machineId;
     }
 
+    public WDCData(Date time, String machineId) {
+        this.timeStamp = time.getTime();
+        values = new HashMap<>();
+        this.machineId = machineId;
+    }
 
-    public Long getTimeStamp() {
+
+    public long getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(Long timeStamp) {
+    public void setTimeStamp(long timeStamp) {
         this.timeStamp = timeStamp;
     }
 
@@ -38,12 +39,16 @@ public class WDCData {
         this.values.put(metricName, value);
     }
 
-    public Short getMachineId() {
+    public String getMachineId() {
         return machineId;
     }
 
-    public void setMachineId(Short machineId) {
+    public void setMachineId(String machineId) {
         this.machineId = machineId;
     }
 
+    @Override
+    public String toString() {
+        return getTimeStamp() + getValues().toString();
+    }
 }
