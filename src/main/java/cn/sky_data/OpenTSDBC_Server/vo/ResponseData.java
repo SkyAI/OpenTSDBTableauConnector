@@ -42,7 +42,8 @@ public class ResponseData<T> {
     }
 
     public ResponseData() {
-
+        this.description = null;
+        this.resultCode = 200;
     }
 
     public T getData() {

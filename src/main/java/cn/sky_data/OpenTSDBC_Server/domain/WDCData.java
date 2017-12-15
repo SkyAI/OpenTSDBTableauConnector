@@ -7,7 +7,9 @@ import java.util.*;
 public class WDCData {
 
     private long timeStamp;
+
     private String machineId;
+
     private Map<String, Double> values;
 
     public WDCData(long time, String machineId) {

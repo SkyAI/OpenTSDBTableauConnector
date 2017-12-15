@@ -1,12 +1,11 @@
 package cn.sky_data.OpenTSDBC_Server.controller;
 
-import cn.sky_data.OpenTSDBC_Server.domain.WDCData;
 import cn.sky_data.OpenTSDBC_Server.repository.OpenTSDBDao;
 import cn.sky_data.OpenTSDBC_Server.service.WDCService;
 import cn.sky_data.OpenTSDBC_Server.vo.MeasurementBindMethod;
 import cn.sky_data.OpenTSDBC_Server.vo.ResponseData;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,13 +28,8 @@ public class WDCController {
     @Autowired
     private OpenTSDBDao openTSDBDao;
 
-    @RequestMapping(path = "/wdc")
-//    @ResponseBody
+    @RequestMapping(path = "/")
     public String getWDC( HttpServletRequest request) {
-        String reqIP = request.getRemoteAddr();
-        //Set allow to cross-domain access.
-//        rsp.setHeader("Access-Control-Allow-Origin", "*");
-//        rsp.addHeader("Access-Control-Allow-Methods", "GET, POST");
         return "wdc";
     }
 
@@ -45,15 +37,18 @@ public class WDCController {
     @ResponseBody
     public ResponseData getRealTimeData(@RequestParam(value = "start") long startTime,
                                         @RequestParam(value = "end") long endTime,
-                                        @RequestParam(value = "metrics") JSONArray metrics,
-                                        @RequestParam(value = "tagList", required = false) JSONArray tagList,
+                                        @RequestParam(value = "metrics") String metricsJson,
+                                        @RequestParam(value = "tagList", required = false) String tagListJson,
                                         HttpServletRequest request) {
         String reqIP = request.getRemoteAddr();
         logger.info(reqIP + " : Request Get Real Time Data. Start: " + startTime + " End: " + endTime);
 
+        JSONArray metrics = JSONArray.parseArray(metricsJson);
+        JSONArray tagList = JSONArray.parseArray(tagListJson);
+
         //Build multi-measurment
         List<MeasurementBindMethod> mbms = new ArrayList<>();
-        for (int i = 0; i < metrics.length(); ++i) {
+        for (int i = 0; i < metrics.size(); ++i) {
             String metric = metrics.getString(i);
             ArrayList<String> methods = new ArrayList<>();
             methods.add("sum");
@@ -65,12 +60,10 @@ public class WDCController {
         List<String> machineList = null;
         if (tagList != null) {
             machineList = new ArrayList<>();
-            for (int i=0; i<tagList.length(); ++i) {
+            for (int i=0; i<tagList.size(); ++i) {
                 JSONObject jsonObject = tagList.getJSONObject(i);
                 for (String key : jsonObject.keySet()) {
-//                    if (key.equals("machineId")) {
                         machineList.add(jsonObject.getString(key));
-//                    }
                 }
             }
         }
@@ -81,12 +74,7 @@ public class WDCController {
         }
 
         ResponseData responseData = wdcService.findBy(startTime, endTime, mbms, machines);
-//        WDCData data = new WDCData((long)1501486474, new Short("1"));
-//        data.putValue("wind.lalala", 1.1);
-//        List<WDCData> res = new ArrayList<>();
-//        res.add(data);
         logger.info(reqIP + " : Get Real Time Data Success");
-//        return new ResponseData<>(res);
         return responseData;
     }
 
@@ -120,6 +108,21 @@ public class WDCController {
 
         ResponseData responseData = openTSDBDao.getTagValues();
         logger.info(reqIP + " : Get All Tag Value Success");
+        return responseData;
+    }
+
+
+    @RequestMapping(path = "/wdc/setconn", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseData setConnection(@RequestParam(value = "host") String host,
+                                     @RequestParam(value = "port") int port,
+                                     HttpServletRequest request) {
+        String reqIP = request.getRemoteAddr();
+        logger.info(reqIP + " : Request Set OpenTSDB Connection.");
+
+        ResponseData responseData = openTSDBDao.setOpenTSDBUrl(host, port);
+
+        logger.info(reqIP + " : Set OpenTSDB Connection Success.");
         return responseData;
     }
 }

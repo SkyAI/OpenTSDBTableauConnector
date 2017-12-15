@@ -1,10 +1,11 @@
 var URL_INFO = {
-    "host" : "192.192.141.40",
-    "port" : "2333"
+    "host" : "localhost",
+    "port" : "8080"
 };
 
 var URL_SUFFIX = {
     "query" : "/wdc/getData",
+    "setConn" : "/wdc/setconn",
     "metrics" : "/wdc/metrics",
     "tagk" : "/wdc/tagk",
     "tagv" : "/wdc/tagv"
@@ -19,7 +20,6 @@ var URL_SUFFIX = {
         var metrics = connectionData["metrics"];
         var tagList = connectionData["tagList"];
         var cols = [
-//                    { id : "metric", alias : "string", dataType : tableau.dataTypeEnum.string },
             { id : "timeStamp", alias : "datetime", dataType : tableau.dataTypeEnum.datetime }
         ];
 
@@ -46,10 +46,6 @@ var URL_SUFFIX = {
             }
             cols.push(tagCol);
         })
-
-//        Object.keys(tags).forEach( function(t) {
-//            cols.concat({ id : t, alias : "string", dataType : tableau.dataTypeEnum.string })
-//        }); // Add tag names to fields
 
         var tableInfo = {
                 id : "OpenTSDB_WDC",
@@ -179,10 +175,10 @@ var URL_SUFFIX = {
                 testFunction(tableList, tagKeyList);
         });
         $('#setUrlButton').click(function(event) {
-            URL_INFO.host = $("#url_host").val().trim();
-            URL_INFO.port = $("#url_port").val().trim();
-            if(URL_INFO.host != null && URL_INFO.port != null && URL_INFO.host.length != 0 && URL_INFO.port.length != 0) {
-                setViewAtr ();
+            opentsdb_host = $("#url_host").val().trim();
+            opentsdb_port = $("#url_port").val().trim();
+            if(opentsdb_host != null && opentsdb_port != null && opentsdb_host.length != 0 && opentsdb_port.length != 0) {
+                setViewAtr (opentsdb_host, opentsdb_port);
             } else {
                 alert("Missing OpenTSDB host Info.");
             }
@@ -190,7 +186,35 @@ var URL_SUFFIX = {
     });
 })()
 
-function setViewAtr () {
+function setViewAtr (opentsdb_host, opentsdb_port) {
+
+    var setOpenTSDBConn = function () {
+        var setConn = buildUrl(URL_INFO.host, URL_INFO.port, URL_SUFFIX.setConn);
+        param = {
+            "host": opentsdb_host,
+            "port": opentsdb_port
+        }
+        $.ajax({
+            url: setConn,
+			type:'post',
+			dataType : 'json',
+			data: param,
+            success: function(res) {
+                alert('Set Connection to OpenTSDB Success');
+                data = res.data;
+                if(res.resultCode == 200 && data != null) {
+                    return true;
+                } else {
+                    alert("Connect to OpenTSDB Failed.");
+                    return false;
+                }
+            },
+            error: function(d,msg) {
+                alert(msg);
+                return false;
+            }
+        });
+    }
 
     var getMetricList = function () {
         var metricUrl = buildUrl(URL_INFO.host, URL_INFO.port, URL_SUFFIX.metrics);
@@ -361,6 +385,7 @@ function setViewAtr () {
 
     return {
         hidden : setHidden(),
+        setConnection: setOpenTSDBConn(),
         metricView: getMetricList(),
         tagKeyView: getTagKeyList(),
         tagValueView: getTagValueList(),
@@ -384,20 +409,6 @@ function testFunction (tableData, tagKeyList) {
 		tableData = [];
         queryUrl = buildUrl(host, port, URL_SUFFIX.query);
         param = buildPostParams(startTime, endTime, metrics, tagList);
-
-//        test(tableData);
-//        queryUrl = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson";
-
-        /* 服务器返回的数据格式为：
-         * {
-         *  "timeStamp": "1501486474",
-         *  "values":{
-         *      "wind.lalala1": 1.1,
-         *      "wind.lalala2":1.2,
-         *      ...
-         *  }
-         * }
-        */
         $.ajax({
             url: queryUrl,
 			type:'post',
@@ -531,14 +542,6 @@ function buildQueryParams( startTime, endTime, metrics) {
 }
 
 function buildPostParams( startTime, endTime, metrics, tagList) {
-//    var mc = [];
-//    tagList.forEach (function(val){
-//        for(var key in val) {
-//            if(key == "machineId"){
-//                mc.push(val[key]-0);
-//            }
-//        }
-//    });
 	var param = {
 	    "start":parserDate(startTime),
 	    "end" : parserDate(endTime),

@@ -1,8 +1,9 @@
 package cn.sky_data.OpenTSDBC_Server.repository;
 
 import cn.sky_data.OpenTSDBC_Server.vo.MeasurementBindMethod;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class OpenTSDBAPI {
                 list.add(jsonObject);
             }
         }
-        JSONArray array = new JSONArray(list);
+        JSONArray array = JSONArray.parseArray(JSON.toJSONString(list));
         param.put("queries", array);
         return param;
     }
@@ -53,7 +54,7 @@ public class OpenTSDBAPI {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("metric",name);
                 //jsonObject.put("rate", true);
-//                jsonObject.put("downsample", groupUnit + "-" + method);
+                //jsonObject.put("downsample", groupUnit + "-" + method);
                 JSONObject tags = new JSONObject();
                 tags.put("machineId", machine);
                 jsonObject.put("tags", tags);
@@ -61,7 +62,7 @@ public class OpenTSDBAPI {
                 list.add(jsonObject);
             }
         }
-        JSONArray array = new JSONArray(list);
+        JSONArray array = JSONArray.parseArray(JSON.toJSONString(list));
         param.put("queries", array);
         return param;
     }
