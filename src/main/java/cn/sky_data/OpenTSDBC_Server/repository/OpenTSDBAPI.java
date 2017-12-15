@@ -1,6 +1,6 @@
 package cn.sky_data.OpenTSDBC_Server.repository;
 
-import cn.sky_data.OpenTSDBC_Server.vo.MeasurementBindMethod;
+import cn.sky_data.OpenTSDBC_Server.vo.MetricBindMethod;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -15,16 +15,16 @@ import java.util.List;
 public class OpenTSDBAPI {
 
 
-    public static JSONObject simpleBuild(Timestamp start, Timestamp end, List<MeasurementBindMethod> measurementBindMethods, String machine, String groupUnit) {
+    public static JSONObject simpleBuild(Timestamp start, Timestamp end, List<MetricBindMethod> metricBindMethods, String machine, String groupUnit) {
         JSONObject param = new JSONObject();
         param.put("start", start.getTime());
         param.put("end", end.getTime());
         param.put("showQuery",true);
 
         List<JSONObject> list = new ArrayList<>();
-        for (MeasurementBindMethod measurementBindMethod : measurementBindMethods) {
-            String name = measurementBindMethod.getName();
-            for (String method:measurementBindMethod.getMethod()){
+        for (MetricBindMethod metricBindMethod : metricBindMethods) {
+            String name = metricBindMethod.getName();
+            for (String method: metricBindMethod.getMethod()){
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("metric",name);
                 //jsonObject.put("rate", true);
@@ -41,16 +41,16 @@ public class OpenTSDBAPI {
         return param;
     }
 
-    public static JSONObject simpleBuild(long start, long end, List<MeasurementBindMethod> measurementBindMethods, String machine) {
+    public static JSONObject simpleBuild(long start, long end, List<MetricBindMethod> metricBindMethods, String machine) {
         JSONObject param = new JSONObject();
         param.put("start", start);
         param.put("end", end);
         param.put("showQuery",true);
 
         List<JSONObject> list = new ArrayList<>();
-        for (MeasurementBindMethod measurementBindMethod : measurementBindMethods) {
-            String name = measurementBindMethod.getName();
-            for (String method:measurementBindMethod.getMethod()){
+        for (MetricBindMethod metricBindMethod : metricBindMethods) {
+            String name = metricBindMethod.getName();
+            for (String method: metricBindMethod.getMethod()){
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("metric",name);
                 //jsonObject.put("rate", true);

@@ -179,7 +179,7 @@ public class OpenTSDBDao {
         this.openTSDBUrl = "http://" + host + ":" + port;
         ResponseData responseData = getVersion();
         if(responseData != null)
-            return new ResponseData("success", ResponseData.RESULT_OK);
+            return new ResponseData<>(responseData.getData(), "success", ResponseData.RESULT_OK);
         else {
             this.openTSDBUrl = oldUrl;
             return new ResponseData("error", ResponseData.RESULT_PARAM_ERROR);

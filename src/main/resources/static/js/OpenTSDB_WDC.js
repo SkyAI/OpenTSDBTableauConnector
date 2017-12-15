@@ -188,21 +188,22 @@ var URL_SUFFIX = {
 
 function setViewAtr (opentsdb_host, opentsdb_port) {
 
-    var setOpenTSDBConn = function () {
+    function setOpenTSDBConn () {
         var setConn = buildUrl(URL_INFO.host, URL_INFO.port, URL_SUFFIX.setConn);
         param = {
             "host": opentsdb_host,
             "port": opentsdb_port
         }
-        $.ajax({
+        return $.ajax({
             url: setConn,
 			type:'post',
 			dataType : 'json',
 			data: param,
+			async: false,
             success: function(res) {
-                alert('Set Connection to OpenTSDB Success');
                 data = res.data;
                 if(res.resultCode == 200 && data != null) {
+                    alert('Set Connection to OpenTSDB Success');
                     return true;
                 } else {
                     alert("Connect to OpenTSDB Failed.");
@@ -282,7 +283,7 @@ function setViewAtr (opentsdb_host, opentsdb_port) {
     }
 
     var tagValues = [];
-    var getTagValueList = function () {
+    function getTagValueList () {
         var tagvUrl = buildUrl(URL_INFO.host, URL_INFO.port, URL_SUFFIX.tagv);
         var tagValueSelector = ".tagValueList select";
         $.ajax({
@@ -363,7 +364,7 @@ function setViewAtr (opentsdb_host, opentsdb_port) {
         }
     });
 
-    var setVisible = function () {
+    function setVisible () {
         if(getMetricList || getTagKeyList || getTagValueList) {
             document.getElementById("inputForm").style.visibility="visible";
             $('#inputForm select').selectpicker({
@@ -377,18 +378,24 @@ function setViewAtr (opentsdb_host, opentsdb_port) {
         }
     }
 
-    var setHidden = function () {
+    function setHidden () {
         $("#url_host").attr("readOnly",true);
         $("#url_port").attr("readOnly",true);
         document.getElementById("setUrlButton").style.visibility="hidden";
     }
 
+    var main = function () {
+        var set_conn_result = setOpenTSDBConn()
+        if(set_conn_result) {
+            setHidden();
+            getMetricList();
+            tagKeys = getTagKeyList();
+            tagValues = getTagValueList();
+        }
+    }
+
     return {
-        hidden : setHidden(),
-        setConnection: setOpenTSDBConn(),
-        metricView: getMetricList(),
-        tagKeyView: getTagKeyList(),
-        tagValueView: getTagValueList(),
+        main : main(),
         tagKeys : tagKeys,
         tagValues : tagValues
     };

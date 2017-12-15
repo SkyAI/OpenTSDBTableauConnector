@@ -5,16 +5,16 @@ import java.util.List;
 /**
  * Created by chenhaonee on 2017/5/18.
  */
-public class MeasurementBindMethod {
+public class MetricBindMethod {
 
     private String name;
 
     private List<String> method;
 
-    public MeasurementBindMethod() {
+    public MetricBindMethod() {
     }
 
-    public MeasurementBindMethod(String name, List<String> method) {
+    public MetricBindMethod(String name, List<String> method) {
         this.name = name;
         this.method = method;
     }

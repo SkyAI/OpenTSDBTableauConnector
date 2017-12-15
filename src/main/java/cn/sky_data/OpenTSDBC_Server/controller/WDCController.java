@@ -2,7 +2,7 @@ package cn.sky_data.OpenTSDBC_Server.controller;
 
 import cn.sky_data.OpenTSDBC_Server.repository.OpenTSDBDao;
 import cn.sky_data.OpenTSDBC_Server.service.WDCService;
-import cn.sky_data.OpenTSDBC_Server.vo.MeasurementBindMethod;
+import cn.sky_data.OpenTSDBC_Server.vo.MetricBindMethod;
 import cn.sky_data.OpenTSDBC_Server.vo.ResponseData;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -47,12 +47,12 @@ public class WDCController {
         JSONArray tagList = JSONArray.parseArray(tagListJson);
 
         //Build multi-measurment
-        List<MeasurementBindMethod> mbms = new ArrayList<>();
+        List<MetricBindMethod> mbms = new ArrayList<>();
         for (int i = 0; i < metrics.size(); ++i) {
             String metric = metrics.getString(i);
             ArrayList<String> methods = new ArrayList<>();
             methods.add("sum");
-            MeasurementBindMethod mbm = new MeasurementBindMethod(metric, methods);
+            MetricBindMethod mbm = new MetricBindMethod(metric, methods);
             mbms.add(mbm);
         }
 

@@ -4,7 +4,7 @@ package cn.sky_data.OpenTSDBC_Server.service;
 import cn.sky_data.OpenTSDBC_Server.domain.WDCData;
 import cn.sky_data.OpenTSDBC_Server.repository.OpenTSDBAPI;
 import cn.sky_data.OpenTSDBC_Server.repository.OpenTSDBDao;
-import cn.sky_data.OpenTSDBC_Server.vo.MeasurementBindMethod;
+import cn.sky_data.OpenTSDBC_Server.vo.MetricBindMethod;
 import cn.sky_data.OpenTSDBC_Server.vo.ResponseData;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -27,13 +27,13 @@ public class WDCService {
     private OpenTSDBDao openTSDBDao;
 
 
-    public ResponseData findBy(long from, long to, List<MeasurementBindMethod> measurementBindMethods, String[] machineId) {
+    public ResponseData findBy(long from, long to, List<MetricBindMethod> metricBindMethods, String[] machineId) {
         logger.info("find by from : " + from + " to : " + to);
         StringBuffer description = new StringBuffer();
         List<WDCData> dataList = new ArrayList<>();
         Arrays.stream(machineId).forEach(id -> {
             //According to OpenTSDB Api, if a machine here misses one of the given measurement, none data will be returned but just a 400 error
-            JSONObject paramsToQuery = OpenTSDBAPI.simpleBuild(from, to, measurementBindMethods, id);
+            JSONObject paramsToQuery = OpenTSDBAPI.simpleBuild(from, to, metricBindMethods, id);
             ResponseData responseData = openTSDBDao.findBy(paramsToQuery);
             if (responseData == null || responseData.getResultCode() != 200)
                 description.append(id)
