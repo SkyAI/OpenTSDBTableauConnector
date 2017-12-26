@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 public class OpenTSDBDao {
-    private String openTSDBUrl;
+    private String openTSDBUrl = null;
 
     private static final MediaType JSONMedia = MediaType.parse("application/json; charset=utf-8");
     private static Logger logger = LoggerFactory.getLogger(OpenTSDBDao.class);
@@ -184,6 +184,10 @@ public class OpenTSDBDao {
             this.openTSDBUrl = oldUrl;
             return new ResponseData("error", ResponseData.RESULT_PARAM_ERROR);
         }
+    }
+
+    public boolean hasSetOpenTSDB() {
+        return openTSDBUrl != null;
     }
 }
 

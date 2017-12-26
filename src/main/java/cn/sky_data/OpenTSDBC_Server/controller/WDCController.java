@@ -40,6 +40,8 @@ public class WDCController {
                                         @RequestParam(value = "metrics") String metricsJson,
                                         @RequestParam(value = "tagList", required = false) String tagListJson,
                                         HttpServletRequest request) {
+        if (!openTSDBDao.hasSetOpenTSDB())
+            return new ResponseData("Error: No OpenTSDB Info has been set.", ResponseData.RESULT_NG);
         String reqIP = request.getRemoteAddr();
         logger.info(reqIP + " : Request Get Real Time Data. Start: " + startTime + " End: " + endTime);
 
@@ -82,6 +84,8 @@ public class WDCController {
     @RequestMapping(path = "/wdc/metrics", method = RequestMethod.GET)
     @ResponseBody
     public ResponseData getMetrics( HttpServletRequest request) {
+        if (!openTSDBDao.hasSetOpenTSDB())
+            return new ResponseData("Error: No OpenTSDB Info has been set.", ResponseData.RESULT_NG);
         String reqIP = request.getRemoteAddr();
         logger.info(reqIP + " : Request Get All Metrics");
         ResponseData responseData = openTSDBDao.getMetrics();
@@ -92,6 +96,8 @@ public class WDCController {
     @RequestMapping(path = "/wdc/tagk", method = RequestMethod.GET)
     @ResponseBody
     public ResponseData getTagKeys(HttpServletRequest request) {
+        if (!openTSDBDao.hasSetOpenTSDB())
+            return new ResponseData("Error: No OpenTSDB Info has been set.", ResponseData.RESULT_NG);
         String reqIP = request.getRemoteAddr();
         logger.info(reqIP + " : Request Get All Tag Key");
 
@@ -103,6 +109,8 @@ public class WDCController {
     @RequestMapping(path = "/wdc/tagv", method = RequestMethod.GET)
     @ResponseBody
     public ResponseData getTagValues(HttpServletRequest request) {
+        if (!openTSDBDao.hasSetOpenTSDB())
+            return new ResponseData("Error: No OpenTSDB Info has been set.", ResponseData.RESULT_NG);
         String reqIP = request.getRemoteAddr();
         logger.info(reqIP + " : Request Get All Tag Value");
 

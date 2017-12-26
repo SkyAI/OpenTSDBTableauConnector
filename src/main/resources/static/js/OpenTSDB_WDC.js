@@ -194,7 +194,8 @@ function setViewAtr (opentsdb_host, opentsdb_port) {
             "host": opentsdb_host,
             "port": opentsdb_port
         }
-        return $.ajax({
+        var result = false;
+        $.ajax({
             url: setConn,
 			type:'post',
 			dataType : 'json',
@@ -204,17 +205,20 @@ function setViewAtr (opentsdb_host, opentsdb_port) {
                 data = res.data;
                 if(res.resultCode == 200 && data != null) {
                     alert('Set Connection to OpenTSDB Success');
-                    return true;
+                    result =  true;
                 } else {
                     alert("Connect to OpenTSDB Failed.");
-                    return false;
+                    result =  false;
+                    tableau.abortWithError("Connect to OpenTSDB Failed.");
                 }
             },
             error: function(d,msg) {
                 alert(msg);
-                return false;
+                result = false;
+                tableau.abortWithError("Connect to OpenTSDB Failed.");
             }
         });
+        return result;
     }
 
     var getMetricList = function () {
@@ -341,7 +345,8 @@ function setViewAtr (opentsdb_host, opentsdb_port) {
 
     var tagInfoEnd = "                     </select>"
                      +"                    </div>";
-                     +"                </div>";
+                     +"                </div>"
+                     +"                <br/>";
     var tagInfoKey = "";
     var tagInfoValue = "";
     $('#addTag').click(function(event) {

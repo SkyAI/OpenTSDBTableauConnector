@@ -9,7 +9,7 @@
           crossorigin="anonymous"/>
     <link rel="stylesheet" href="css/bootstrap-select.min.css" data-th-href="@{css/bootstrap-select.min.css}"
           crossorigin="anonymous"/>
-    <link rel="stylesheet" href="css/bootstrap-datetimepicker.min.js" data-th-href="@{css/bootstrap-select.min.css}"
+    <link rel="stylesheet" href="css/bootstrap-datetimepicker.min.css" data-th-href="@{css/bootstrap-datetimepicker.min.css}"
           crossorigin="anonymous"/>
     <script src="js/lib/jquery-3.2.1.min.js" type="text/javascript" data-th-src="@{js/lib/jquery-3.2.1.min.js}"
             crossorigin="anonymous"></script>
@@ -20,7 +20,7 @@
     <script src="js/lib/tableauwdc-2.2.latest.js" type="text/javascript"
             data-th-src="@{js/lib/tableauwdc-2.2.latest.js}" crossorigin="anonymous"></script>
     <script src="js/lib/bootstrap-datetimepicker.min.js" type="text/javascript"
-            data-th-src="@{js/lib/tableauwdc-2.2.latest.js}" crossorigin="anonymous"></script>
+            data-th-src="@{js/lib/bootstrap-datetimepicker.min.js}" crossorigin="anonymous"></script>
     <!--<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">-->
     <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" type="text/javascript"></script>-->
     <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>-->
@@ -49,22 +49,24 @@
     <form role="form" id="postForm" action="">
         <!--style="visibility: hidden;">-->
         <div class="form-group">
-            <label for="start_datetime">Start Time:</label>
-            <div class='input-group date' id='start_datetime' data-date="2017/12/01-00:00:00"
-                 data-date-format="yyyy/mm/dd-hh:ii:ss">
+            <label for="start_datetime_input">Start Time:</label>
+            <div class='input-group date form_datetime' id='start_datetime' data-date="2017/12/01-00:00:00"
+                 data-date-format="yyyy/mm/dd-hh:ii:ss" data-link-field="start_datetime_input" data-link-format="yyyy/mm/dd-hh:ii:ss">
                 <input class="form-control" id="start_time" type="text" value="2017/12/01-00:00:00"/>
                 <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar add-on"></span>
+                    <span class="glyphicon glyphicon-time"></span>
                 </span>
             </div>
+            <input type="hidden" id="start_datetime_input" value="" /><br/>
             <label for="end_datetime">End Time:</label>
-            <div class='input-group date' id='end_datetime' data-date="2017/12/10-00:00:00"
-                 data-date-format="yyyy/mm/dd-hh:ii:ss">
+            <div class='input-group date form_datetime' id='end_datetime' data-date="2017/12/10-00:00:00"
+                 data-date-format="yyyy/mm/dd-hh:ii:ss" data-link-field="end_time" data-link-format="yyyy/mm/dd-hh:ii:ss">
                 <input class="form-control" id="end_time" type="text" value="2017/12/10-00:00:00"/>
                 <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar add-on"></span>
+                    <span class="glyphicon glyphicon-time"></span>
                 </span>
             </div>
+            <br/>
             <label for="metricList">Metric:</label>
             <!--<div class="form-group" id='metricList'>-->
             <!--<input class="form-control" value="lalala">-->
@@ -75,9 +77,10 @@
                     <!--<option>lalala</option>-->
                 </select>
             </div>
+            <br/>
             <label for="addTag">Tags:</label>
-            <button type="button" id="addTag" class="btn btn-info" style="margin-top: 10px;margin-bottom: 10px;">+ Add
-                Tag
+            <button type="button" id="addTag" class="btn btn-info" style="margin-top: 10px;margin-bottom: 10px;">
+                + Add Tag
             </button>
             <div class="container" id="tagTable">
                 <!--<form class="form-inline tagsFormTemplate" role="form" style="visibility: hidden;">-->
@@ -105,9 +108,9 @@
             <tr>
                 <th>no</th>
                 <th>timestamp</th>
-                <th>lalala1</th>
-                <th>lalala2</th>
-                <th>lalala3</th>
+                <th>metric1</th>
+                <th>metric2</th>
+                <th>metric3</th>
                 <th></th>
             </tr>
             </thead>
